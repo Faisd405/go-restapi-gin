@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/faisd405/go-restapi-gin/src/app/example"
+	example "github.com/faisd405/go-restapi-gin/src/app/example/model"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -9,7 +9,7 @@ import (
 var DB *gorm.DB
 
 func ConnectDatabase() {
-	database, err := gorm.Open(mysql.Open("root:@tcp(localhost:3306)/go_restapi_gin"))
+	database, err := gorm.Open(mysql.Open("root:@tcp(localhost:3306)/golang"))
 	if err != nil {
 		panic(err)
 	}

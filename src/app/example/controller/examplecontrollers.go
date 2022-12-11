@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/faisd405/go-restapi-gin/models"
+	ExampleModel "github.com/faisd405/go-restapi-gin/src/app/example/model"
+	database "github.com/faisd405/go-restapi-gin/src/config"
 	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
@@ -12,18 +13,18 @@ import (
 
 func Index(c *gin.Context) {
 
-	var products []models.Product
+	var examples []ExampleModel.Example
 
-	models.DB.Find(&products)
-	c.JSON(http.StatusOK, gin.H{"products": products})
+	database.DB.Find(&examples)
+	c.JSON(http.StatusOK, gin.H{"examples": examples})
 
 }
 
 func Show(c *gin.Context) {
-	var product models.Product
+	var example ExampleModel.Example
 	id := c.Param("id")
 
-	if err := models.DB.First(&product, id).Error; err != nil {
+	if err := database.DB.First(&example, id).Error; err != nil {
 		switch err {
 		case gorm.ErrRecordNotFound:
 			c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"message": "Data tidak ditemukan"})
@@ -34,43 +35,42 @@ func Show(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, gin.H{"product": product})
+	c.JSON(http.StatusOK, gin.H{"example": example})
 }
 
 func Create(c *gin.Context) {
 
-	var product models.Product
+	var example ExampleModel.Example
 
-	if err := c.ShouldBindJSON(&product); err != nil {
+	if err := c.ShouldBindJSON(&example); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
-	models.DB.Create(&product)
-	c.JSON(http.StatusOK, gin.H{"product": product})
+	database.DB.Create(&example)
+	c.JSON(http.StatusOK, gin.H{"example": example})
 }
 
 func Update(c *gin.Context) {
-	var product models.Product
+	var example ExampleModel.Example
 	id := c.Param("id")
 
-	if err := c.ShouldBindJSON(&product); err != nil {
+	if err := c.ShouldBindJSON(&example); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
-	if models.DB.Model(&product).Where("id = ?", id).Updates(&product).RowsAffected == 0 {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "tidak dapat mengupdate product"})
+	if database.DB.Model(&example).Where("id = ?", id).Updates(&example).RowsAffected == 0 {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "tidak dapat mengupdate example"})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Data berhasil diperbarui"})
-
 }
 
 func Delete(c *gin.Context) {
 
-	var product models.Product
+	var example ExampleModel.Example
 
 	var input struct {
 		Id json.Number
@@ -82,8 +82,8 @@ func Delete(c *gin.Context) {
 	}
 
 	id, _ := input.Id.Int64()
-	if models.DB.Delete(&product, id).RowsAffected == 0 {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Tidak dapat menghapus product"})
+	if database.DB.Delete(&example, id).RowsAffected == 0 {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Tidak dapat menghapus example"})
 		return
 	}
 
