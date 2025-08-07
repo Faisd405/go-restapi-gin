@@ -43,8 +43,7 @@ func ConnectDatabase() {
 	}
 
 	// Create DSN
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
-		host, port, user, password, dbname, sslmode)
+    dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", user, password, host, port, dbname)
 
 	// Connect to database
 	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
